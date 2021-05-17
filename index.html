@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>✅ ∅UR PÂ55</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="display-8 my-1 text-center">
+    <code>Current data: {{.MyTime}}, Server IP: {{.YourIP}}, Server Country: {{.YourCountry}}, Server Country Code: {{.YourCC}}</code>
+    </div>
+  <div class="jumbotron text-center text-primary bg-light" style="font-family: 'Roboto', sans-serif">
+    <h1 class="display-4">∅UR PÂ55</h1> 
+    	<div class="display-8 my-1">
+        <span class="badge badge-pill badge-warning">This site was created by a Russian bear with a balalaika</span>
+        </div>
+        <div class="display-8 my-1 align-baseline"><img src="/img/russia.png" width="100"></div>
+          </div>
+  <div class="container" style="font-family: 'Roboto', sans-serif; font-size: medium;">
+    <div class="row">
+      <div class="col-sm-12">
+        <h3 class="text-info text-center">Automatically Generated Passwords</h3>
+        <div class="col-sm-12 text-center">
+          <p>Strong</p>
+          <p>{{range .PassStrong}}</p>
+          <code>{{.}}</code>
+          <p>{{end}}</p>
+      </div>
+      <div class="col-sm-12 text-center">
+        <p>Medium</p>
+      <p>{{range .Pass}}</p>
+      <code>{{.}}</code>
+      <p>{{end}}</p>
+      </div>
+    </div>
+  </div>
+</body>
+<footer>
+  <div class="footer text-center align-bottom" style="font-size:medium">
+  <img src="/img/bear.png" width="80">
+</div>
+<div class="footer text-center align-bottom" style="font-size:medium"><a rel="license" href="https://github.com/igotodev/ourpassgo/blob/main/LICENSE">The MIT License</a></div>
+<div class="footer text-center align-bottom" style="font-size:medium">
+  <p class="text-secondary">2021</p>
+</div>
+</footer>
+</html>
