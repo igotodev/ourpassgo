@@ -14,7 +14,7 @@ import (
 	"github.com/igotodev/gspass"
 )
 
-type GuestBook struct {
+type GuestPage struct {
 	MyTime      string
 	Pass        []string
 	PassStrong  []string
@@ -23,15 +23,59 @@ type GuestBook struct {
 	YourCC      string
 }
 
-type YourIP struct {
+type ServerIP struct {
 	IP      string `json:"ip"`
 	Country string `json:"country"`
 	CC      string `json:"cc"`
+}
+type Article struct {
+	Title      string    `json:"title"`    // заголовок темы/новости
+	Content    string    `json:"content"`  // полный текст новости
+	Snippet    string    `json:"snippet"`  // короткое текстовое описание
+	MainPic    string    `json:"pic"`      // ссылка на основную картинку
+	Link       string    `json:"link"`     // ссылка на оригинал
+	Author     string    `json:"author"`   // автор новости
+	Ts         time.Time `json:"ts"`       // дата-время оригинла
+	AddedTS    time.Time `json:"ats"`      // дата-время добавления на сайт
+	Active     bool      `json:"active"`   // флаг текущей активности
+	ActiveTS   time.Time `json:"activets"` // дата-время активации
+	Geek       bool      `json:"geek"`     // флаг гиковской темы
+	Votes      int       `json:"votes"`    // колличество голосов за тему
+	Deleted    bool      `json:"del"`      // флаг удаления
+	Archived   bool      `json:"archived"` // флаг архивации
+	Slug       string    `json:"slug"`     // slug новости
+	SourceFeed string    `json:"feed"`     // RSS фид источника
+	Domain     string    `json:"domain"`   // домен новости
+	Comments   int       `json:"comments"` // число комментариев
+	Likes      int       `json:"likes"`    // число лайков
+	ShowNumber int       `json:"show_num"` // номер выпуска
 }
 
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Loadind radio-t...")
+	tmpl, err := template.ParseFiles("balalaika.html")
+	checkErr(err)
+
+	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/25")
+	checkErr(err)
+
+	data, err := ioutil.ReadAll(resp.Body)
+	checkErr(err)
+	defer resp.Body.Close()
+
+	news := []Article{}
+
+	err = json.Unmarshal(data, &news)
+	checkErr(err)
+	for i := 0; i < len(news); i++ {
+		err = tmpl.Execute(w, news[i])
+		checkErr(err)
 	}
 }
 
@@ -58,11 +102,11 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	answ, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	checkErr(err)
-	jsonAnsw := YourIP{}
+	jsonAnsw := ServerIP{}
 	err = json.Unmarshal(answ, &jsonAnsw)
 	checkErr(err)
 
-	myGuestBook := GuestBook{
+	myGuestPage := GuestPage{
 		MyTime:      t.Format("2006-01-02"),
 		Pass:        passList,
 		PassStrong:  passListStrong,
@@ -71,13 +115,14 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 		YourCC:      jsonAnsw.CC,
 	}
 
-	err = temp.Execute(writer, myGuestBook)
+	err = temp.Execute(writer, myGuestPage)
 	checkErr(err)
 }
 
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", viewHandler)
+	mux.HandleFunc("/balalaika", balalaikaHandler)
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
