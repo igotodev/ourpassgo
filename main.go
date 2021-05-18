@@ -136,7 +136,7 @@ func main() {
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
-		Addr:         ":8080", //+ os.Getenv("PORT"),
+		Addr:         ":" + os.Getenv("PORT"),
 		Handler:      mux,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
