@@ -51,6 +51,12 @@ type Article struct {
 	ShowNumber int       `json:"show_num"` // номер выпуска
 }
 
+type FinalNews struct {
+	TitleF   []string
+	SnippetF []string
+	LinkF    []string
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +68,7 @@ func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("balalaika.html")
 	checkErr(err)
 
-	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/25")
+	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/5")
 	checkErr(err)
 
 	data, err := ioutil.ReadAll(resp.Body)
@@ -70,13 +76,17 @@ func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	news := []Article{}
-
+	FNews := FinalNews{}
 	err = json.Unmarshal(data, &news)
 	checkErr(err)
-	for i := 0; i < len(news); i++ {
-		err = tmpl.Execute(w, news[i])
-		checkErr(err)
+	for _, v := range news {
+		FNews.TitleF = append(FNews.TitleF, v.Title)
+		FNews.SnippetF = append(FNews.SnippetF, v.Snippet)
+		FNews.LinkF = append(FNews.LinkF, v.Link)
 	}
+	err = tmpl.Execute(w, FNews)
+	checkErr(err)
+
 }
 
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
@@ -126,7 +136,7 @@ func main() {
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
-		Addr:         ":" + os.Getenv("PORT"),
+		Addr:         ":8080", //+ os.Getenv("PORT"),
 		Handler:      mux,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,

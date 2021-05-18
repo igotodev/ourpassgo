@@ -14,17 +14,23 @@
   <div class="container">
     <div class="row">
         <div class="col-sm-12 text-center">
-            <h4>{{.Title}}</h4>
-            <code>{{if .Geek}}GEEK NEWS!{{end}}</code>
-            <p>{{.Snippet}}</p>
-            <code><a href="{{.Link}}">{{.Link}}</a></code>
+          <div>
+            <p>{{range .SnippetF}}</p>
+            <p>{{.}}</p>
+            <p>{{end}}</p>
+            </div>
+            <div>
+              <code>{{range .LinkF}}</code>
+              <table class=""><code><a href="{{.}}">{{.}}</a></code><table>
+              <code>{{end}}</code>
+            </div>
       </div>
     </div>
   </div>
 </body>
 <footer>
   <div class="footer text-center align-bottom" style="font-size:medium">
-  <img src="/img/people.png" width="80">
-</div>
+    <img src="/img/people.png" width="80">
+  </div>
 </footer>
 </html>
