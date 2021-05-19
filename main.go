@@ -1,3 +1,4 @@
+// a simple server to generate passwords
 package main
 
 import (
@@ -51,24 +52,22 @@ type Article struct {
 	ShowNumber int       `json:"show_num"` // номер выпуска
 }
 
-type FinalNews struct {
-	TitleF   []string
-	SnippetF []string
-	LinkF    []string
-}
-
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
+// just for a joke
 func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Loadind radio-t...")
-	tmpl, err := template.ParseFiles("balalaika.html")
+	files := []string{
+		"balalaika.html",
+	}
+	tmpl, err := template.ParseFiles(files...)
 	checkErr(err)
 
-	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/5")
+	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/10")
 	checkErr(err)
 
 	data, err := ioutil.ReadAll(resp.Body)
@@ -76,15 +75,9 @@ func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	news := []Article{}
-	FNews := FinalNews{}
 	err = json.Unmarshal(data, &news)
 	checkErr(err)
-	for _, v := range news {
-		FNews.TitleF = append(FNews.TitleF, v.Title)
-		FNews.SnippetF = append(FNews.SnippetF, v.Snippet)
-		FNews.LinkF = append(FNews.LinkF, v.Link)
-	}
-	err = tmpl.Execute(w, FNews)
+	err = tmpl.ExecuteTemplate(w, "news", news)
 	checkErr(err)
 
 }

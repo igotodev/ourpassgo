@@ -1,4 +1,4 @@
 # ourpassgo
-Password generator server for the site 
+A simple server to generate passwords
 ## demo
 https://ourpassgo.herokuapp.com/
