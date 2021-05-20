@@ -1,4 +1,5 @@
-// a simple server to generate passwords and fun
+// a simple server to generate passwords
+// and news parser just for a good time ( /matreshka )
 package main
 
 import (
@@ -58,20 +59,20 @@ func checkErr(err error) {
 	}
 }
 
-// just for a joke
-func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/balalaika" {
+// news parser just for a good time
+func matreshkaHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/matreshka" {
 		http.NotFound(w, r)
 		return
 	}
 	fmt.Println("Loadind radio-t...")
 	files := []string{
-		"html/balalaika.html",
+		"html/matreshka.html",
 	}
 	tmpl, err := template.ParseFiles(files...)
 	checkErr(err)
 
-	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/10")
+	resp, err := http.Get("https://news.radio-t.com/api/v1/news/last/10") // it takes a json with the ten most recent news items
 	checkErr(err)
 
 	data, err := ioutil.ReadAll(resp.Body)
@@ -86,6 +87,7 @@ func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// main page
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	if request.URL.Path != "/" {
 		http.NotFound(writer, request)
@@ -97,18 +99,18 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	passList := make([]string, 5)
 	passListStrong := make([]string, 5)
 
-	//fmt.Printf("%v success\n", passList)
+	// generates 5 passwords of medium complexity
 	for i := 0; i < 5; i++ {
 		passList[i], err = gspass.GetPassDL(35)
 		checkErr(err)
 	}
-
+	// generates 5 passwords of high complexity
 	for i := 0; i < 5; i++ {
 		passListStrong[i], err = gspass.GetPass(35)
 		checkErr(err)
 	}
 
-	resp, err := http.Get("https://api.myip.com/")
+	resp, err := http.Get("https://api.myip.com/") // it takes a json with ip info about server
 	checkErr(err)
 	answ, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
@@ -133,7 +135,7 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", viewHandler)
-	mux.HandleFunc("/balalaika", balalaikaHandler)
+	mux.HandleFunc("/matreshka", matreshkaHandler)
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{

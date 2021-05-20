@@ -1,0 +1,49 @@
+{{define "news"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>📻 Matreshka News</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="text-center text-primary bg-light" style="font-family: 'Raleway'", sans-serif;>
+    <h1 class="display-4">Main News</h1>
+    <hr>
+  </div>
+  <div class="container">
+    <div class="row">
+        <div class="col-sm-12 text-left">
+          {{range .}}
+          <div class="display-8 my-1 text-dark text-left">
+            <h3>{{.Title}}</h3>
+          </div>
+          <div class="display-8 my-1 text-secondary text-left">
+            <p>{{.Snippet}}</p>
+          </div>
+          <div class="display-8 my-4 text-left">
+            <code><a href="{{.Link}}" target="_blank">{{.Link}}</a></code>
+          </div>
+          <div class="display-8 my-2 text-center"><code>***</code></div>
+          {{end}} 
+      </div>
+    </div>
+  </div>
+</body>
+<footer>
+  <hr>
+  <div class="footer text-center align-bottom" style="font-size:medium">
+    <img src="/img/people.png" width="80">
+  </div>
+  <div class="footer text-center align-bottom" style="font-size:medium"><a rel="license" href="https://github.com/igotodev/ourpassgo/blob/main/LICENSE">The MIT License</a></div>
+<div class="footer text-center align-bottom text-secondary" style="font-size:medium">
+  <p>2021</p>
+</div>
+</footer>
+</html>
+{{end}}
