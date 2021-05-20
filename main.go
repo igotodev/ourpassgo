@@ -1,4 +1,4 @@
-// a simple server to generate passwords
+// a simple server to generate passwords and fun
 package main
 
 import (
@@ -60,9 +60,13 @@ func checkErr(err error) {
 
 // just for a joke
 func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/balalaika" {
+		http.NotFound(w, r)
+		return
+	}
 	fmt.Println("Loadind radio-t...")
 	files := []string{
-		"balalaika.html",
+		"html/balalaika.html",
 	}
 	tmpl, err := template.ParseFiles(files...)
 	checkErr(err)
@@ -83,7 +87,11 @@ func balalaikaHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
-	temp, err := template.ParseFiles("index.html")
+	if request.URL.Path != "/" {
+		http.NotFound(writer, request)
+		return
+	}
+	temp, err := template.ParseFiles("html/index.html")
 	checkErr(err)
 	t := time.Now().UTC().Local()
 	passList := make([]string, 5)
@@ -129,7 +137,8 @@ func main() {
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
-		Addr:         ":" + os.Getenv("PORT"),
+		Addr: ":" + os.Getenv("PORT"),
+		//Addr:         ":8080",
 		Handler:      mux,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
