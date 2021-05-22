@@ -137,15 +137,30 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 func logMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		for i := 0; i < 19; i++ {
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(2 * time.Millisecond)
 			fmt.Print(":")
 			if i == 18 {
 				fmt.Printf("\n%s opened %s\n", r.RemoteAddr, r.URL.Path)
 			}
 		}
-		log.Printf("Always good")
+		log.Printf("always good")
 		next(w, r)
 	}
+}
+
+
+// printConsoleLogo just printed logo in terminal (not necessarily, it's for fun)
+func printConsoleLogo() {
+	time.Sleep(400 * time.Millisecond)
+	var logo string = ":::::OURPA55GO:::::"
+	for i := 0; i < len(logo); i++ {
+		time.Sleep(150 * time.Millisecond)
+		fmt.Print(string(logo[i]))
+		if i == len(logo)-1 {
+			time.Sleep(800 * time.Millisecond)
+		}
+	}
+	fmt.Printf("\n")
 }
 
 func main() {
@@ -161,7 +176,7 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-
+	printConsoleLogo()
 	log.Println("starting server on" + os.Getenv("PORT"))
 	//log.Println("starting server on port 8080")
 	err := server.ListenAndServe()
