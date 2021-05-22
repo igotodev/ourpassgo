@@ -132,10 +132,26 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	checkErr(err)
 }
 
+// logMiddleware implements a delay (not necessarily) and logging,
+// but if you want it can implement more useful functionality
+func logMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		for i := 0; i < 19; i++ {
+			time.Sleep(10 * time.Millisecond)
+			fmt.Print(":")
+			if i == 18 {
+				fmt.Printf("\n%s opened %s\n", r.RemoteAddr, r.URL.Path)
+			}
+		}
+		log.Printf("Always good")
+		next(w, r)
+	}
+}
+
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", viewHandler)
-	mux.HandleFunc("/matreshka", matreshkaHandler)
+	mux.HandleFunc("/", logMiddleware(viewHandler))
+	mux.HandleFunc("/matreshka", logMiddleware(matreshkaHandler))
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
@@ -146,7 +162,8 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	fmt.Println("starting server on" + os.Getenv("PORT"))
+	log.Println("starting server on" + os.Getenv("PORT"))
+	//log.Println("starting server on port 8080")
 	err := server.ListenAndServe()
 	checkErr(err)
 
