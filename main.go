@@ -149,7 +149,7 @@ func logMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// consolePrintASCII printed ASCII text from file in os.Stdout (not necessarily, it's for fun)
+// consolePrintASCII printed ASCII text from file to os.Stdout (not necessarily, it's for fun)
 func consolePrintASCII(file string) {
 	logo, err := os.Open(file)
 	if err != nil {
@@ -160,7 +160,6 @@ func consolePrintASCII(file string) {
 		log.Fatal(err)
 	}
 	size := info.Size()
-	//fmt.Println(size)
 	reader := bufio.NewReader(logo)
 	b, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -177,7 +176,7 @@ func consolePrintASCII(file string) {
 }
 
 /*
-// printLogo just printed logo in terminal (not necessarily, it's for fun)
+// printLogo just printed logo (not necessarily, it's for fun)
 func printLogo() {
 	time.Sleep(400 * time.Millisecond)
 	var logo string = ":::::OURPA55GO:::::"
@@ -198,16 +197,16 @@ func main() {
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
-		Addr: ":" + os.Getenv("PORT"),
-		//Addr:         ":8080",
+		//Addr: ":" + os.Getenv("PORT"),
+		Addr:         ":8080",
 		Handler:      mux,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 	consolePrintASCII("warning.txt") // start logo with comments
 	//printLogo()
-	log.Println("starting server on" + os.Getenv("PORT"))
-	//log.Println("starting server on port 8080")
+	//log.Println("starting server on" + os.Getenv("PORT"))
+	log.Println("starting server on port 8080")
 	err := server.ListenAndServe()
 	checkErr(err)
 
