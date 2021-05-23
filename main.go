@@ -149,27 +149,29 @@ func logMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// consolePrintASCII printed ASCII text from file to os.Stdout (not necessarily, it's for fun)
-func consolePrintASCII(file string) {
+// consolePrint printed UTF8 text from file to os.Stdout (not necessarily, it's for fun)
+func consolePrint(file string) {
 	logo, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
 	}
-	info, err := logo.Stat()
-	if err != nil {
-		log.Fatal(err)
-	}
-	size := info.Size()
-	reader := bufio.NewReader(logo)
-	b, err := ioutil.ReadAll(reader)
-	if err != nil {
-		log.Fatal(err)
-	}
+	/*
+		info, err := logo.Stat()
+		if err != nil {
+			log.Fatal(err)
+		}
+		size := info.Size()
+		fmt.Println(size)
+	*/
 	time.Sleep(500 * time.Millisecond)
-
-	for i := 0; i < int(size); i++ {
-		time.Sleep(50 * time.Millisecond)
-		fmt.Fprint(os.Stdout, string(b[i]))
+	scanner := bufio.NewScanner(logo)
+	for scanner.Scan() {
+		myBytes := scanner.Text() + "\n"
+		//fmt.Println(string(myBytes))
+		for _, v := range myBytes {
+			time.Sleep(50 * time.Millisecond)
+			fmt.Fprint(os.Stdout, string(v))
+		}
 	}
 	time.Sleep(500 * time.Millisecond)
 	fmt.Fprintf(os.Stdout, "\n")
@@ -190,6 +192,7 @@ func printLogo() {
 	fmt.Printf("\n")
 }
 */
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", logMiddleware(viewHandler))
@@ -203,7 +206,7 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	consolePrintASCII("warning.txt") // start logo with comments
+	consolePrint("warning.txt") // start logo with comments
 	//printLogo()
 	//log.Println("starting server on" + os.Getenv("PORT"))
 	log.Println("starting server on port 8080")
