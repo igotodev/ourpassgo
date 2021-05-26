@@ -155,7 +155,7 @@ func logMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		next(w, r)
 	}
 }
-/*
+
 // consolePrint printed UTF8 text from file to os.Stdout (not necessarily, it's for fun)
 func consolePrint(file string) {
 	logo, err := os.Open(file)
@@ -177,7 +177,7 @@ func consolePrint(file string) {
 	fmt.Fprintf(os.Stdout, "\n")
 }
 
-
+/*
 // printLogo just printed logo (not necessarily, it's for fun)
 func printLogo() {
 	time.Sleep(400 * time.Millisecond)
