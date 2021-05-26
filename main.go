@@ -1,8 +1,9 @@
 // a simple server to generate passwords
-// and news parser just for a good time ( /matreshka )
+// and news parser just for a good time ( /belka )
 package main
 
 import (
+	//"bufio"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -61,14 +62,14 @@ func checkErr(err error) {
 }
 
 // news parser just for a good time
-func matreshkaHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/matreshka" {
-		http.NotFound(w, r)
+func belkaHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/belka" {
+		http.Redirect(w, r, "/notfound", http.StatusFound)
 		return
 	}
 	fmt.Println("Loadind radio-t...")
 	files := []string{
-		"html/matreshka.html",
+		"html/belka.html",
 	}
 	tmpl, err := template.ParseFiles(files...)
 	checkErr(err)
@@ -91,7 +92,7 @@ func matreshkaHandler(w http.ResponseWriter, r *http.Request) {
 // main page
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	if request.URL.Path != "/" {
-		http.NotFound(writer, request)
+		http.Redirect(writer, request, "/notfound", http.StatusFound)
 		return
 	}
 	temp, err := template.ParseFiles("html/index.html")
@@ -132,6 +133,12 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	err = temp.Execute(writer, myGuestPage)
 	checkErr(err)
 }
+func notFoundHandler(writer http.ResponseWriter, request *http.Request) {
+	temp, err := template.ParseFiles("html/notfound.html")
+	checkErr(err)
+	err = temp.Execute(writer, nil)
+	checkErr(err)
+}
 
 // logMiddleware implements a delay (not necessarily) and logging,
 // but if you want it can implement more useful functionality
@@ -148,21 +155,14 @@ func logMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		next(w, r)
 	}
 }
-
+/*
 // consolePrint printed UTF8 text from file to os.Stdout (not necessarily, it's for fun)
 func consolePrint(file string) {
 	logo, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
 	}
-	/*
-		info, err := logo.Stat()
-		if err != nil {
-			log.Fatal(err)
-		}
-		size := info.Size()
-		fmt.Println(size)
-	*/
+
 	time.Sleep(500 * time.Millisecond)
 	scanner := bufio.NewScanner(logo)
 	for scanner.Scan() {
@@ -177,11 +177,11 @@ func consolePrint(file string) {
 	fmt.Fprintf(os.Stdout, "\n")
 }
 
-/*
+
 // printLogo just printed logo (not necessarily, it's for fun)
 func printLogo() {
 	time.Sleep(400 * time.Millisecond)
-	var logo string = ":::::OURPA55GO:::::"
+	var logo string = ":::::OURPASSGO:::::"
 	for i := 0; i < len(logo); i++ {
 		time.Sleep(150 * time.Millisecond)
 		fmt.Print(string(logo[i]))
@@ -196,7 +196,8 @@ func printLogo() {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", logMiddleware(viewHandler))
-	mux.HandleFunc("/matreshka", logMiddleware(matreshkaHandler))
+	mux.HandleFunc("/belka", logMiddleware(belkaHandler))
+	mux.HandleFunc("/notfound", logMiddleware(notFoundHandler))
 	mux.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	server := http.Server{
